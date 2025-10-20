@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    container_name: toyota-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - toyota-network
+    restart: unless-stopped
+
+  # .NET Web API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: toyota-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5221
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=VehicleServiceTrackerDb;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ToyotaTurkiyeVehicleServiceTrackerSecretKey2024!MinimumLengthRequired
+      - Jwt__Issuer=VehicleServiceTrackerAPI
+      - Jwt__Audience=VehicleServiceTrackerClient
+    ports:
+      - "5221:5221"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - toyota-network
+    restart: unless-stopped
+
+  # React Web Application
+  web:
+    build:
+      context: ./src/Web
+      dockerfile: ../../Dockerfile.web
+    container_name: toyota-web
+    environment:
+      - VITE_API_URL=http://localhost:5221/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - toyota-network
+    restart: unless-stopped
+
+networks:
+  toyota-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

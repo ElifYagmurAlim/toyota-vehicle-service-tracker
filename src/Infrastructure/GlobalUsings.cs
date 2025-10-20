@@ -1,0 +1,10 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading;
+global using System.Threading.Tasks;
+global using Microsoft.EntityFrameworkCore;
+global using VehicleServiceTracker.Domain.Entities;
+global using VehicleServiceTracker.Domain.Interfaces;
+global using VehicleServiceTracker.Application.Interfaces;
+global using VehicleServiceTracker.Infrastructure.Persistence;

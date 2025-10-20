@@ -1,0 +1,14 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Threading;
+global using System.Threading.Tasks;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using MediatR;
+global using VehicleServiceTracker.Application.Common.Models;
+global using VehicleServiceTracker.Application.DTOs;
+global using VehicleServiceTracker.Application.Features.Auth.Commands;
+global using VehicleServiceTracker.Application.Features.ServiceEntries.Commands;
+global using VehicleServiceTracker.Application.Features.ServiceEntries.Queries;
+global using VehicleServiceTracker.Domain.Interfaces;
+global using VehicleServiceTracker.Application.Interfaces;

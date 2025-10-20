@@ -1,0 +1,53 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+.vs/
+.vscode/
+*.swp
+*~
+
+## Entity Framework
+Migrations/
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+
+## Application Logs
+Logs/
+*.txt
+
+## Node.js / Frontend
+node_modules/
+npm-debug.log*
+dist/
+dist-ssr/
+*.local
+
+## Environment variables
+.env
+.env.local
+.env.*.local
+
+## Database
+*.db
+*.sqlite
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Docker
+.dockerignore
+
+## Keep these
+!.gitkeep
+!DatabaseScripts/*.sql
+!README.md
