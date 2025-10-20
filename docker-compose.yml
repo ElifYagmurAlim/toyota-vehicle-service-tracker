@@ -3,17 +3,27 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile.db
+    image: postgres:16
     container_name: toyota-postgres
+    environment:
+      - POSTGRES_DB=VehicleServiceTrackerDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - LC_ALL=en_US.UTF-8
+      - LANG=en_US.UTF-8
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./DatabaseScripts:/docker-entrypoint-initdb.d
     networks:
       - toyota-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d VehicleServiceTrackerDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # .NET Web API
   api:
