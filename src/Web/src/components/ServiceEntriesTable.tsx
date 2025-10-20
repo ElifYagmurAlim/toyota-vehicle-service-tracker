@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { PaginatedResult, ServiceEntry } from '../types';
 
 interface ServiceEntriesTableProps {
@@ -8,6 +9,8 @@ interface ServiceEntriesTableProps {
 }
 
 const ServiceEntriesTable = ({ data, isLoading, pageNumber, onPageChange }: ServiceEntriesTableProps) => {
+  const [selectedEntry, setSelectedEntry] = useState<ServiceEntry | null>(null);
+
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -52,6 +55,9 @@ const ServiceEntriesTable = ({ data, isLoading, pageNumber, onPageChange }: Serv
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Şehir
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                İşlemler
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -91,11 +97,96 @@ const ServiceEntriesTable = ({ data, isLoading, pageNumber, onPageChange }: Serv
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {entry.serviceCity || '-'}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button
+                    onClick={() => setSelectedEntry(entry)}
+                    className="inline-flex items-center px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition duration-150"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Detay
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Servis Notu Modal */}
+      {selectedEntry && (
+        <div 
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedEntry(null)}
+        >
+          <div 
+            className="relative bg-white rounded-lg shadow-xl max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">
+                Servis Detayı
+              </h3>
+              <p className="text-sm text-gray-600">
+                {selectedEntry.licensePlate} - {selectedEntry.brandName} {selectedEntry.modelName}
+              </p>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="px-6 py-4">
+              <div className="space-y-3">
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Servis Tarihi:</dt>
+                  <dd className="text-sm text-gray-900">
+                    {new Date(selectedEntry.serviceDate).toLocaleDateString('tr-TR')}
+                  </dd>
+                </div>
+                
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Şehir:</dt>
+                  <dd className="text-sm text-gray-900">{selectedEntry.serviceCity || '-'}</dd>
+                </div>
+                
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Kilometre:</dt>
+                  <dd className="text-sm text-gray-900">
+                    {selectedEntry.kilometers.toLocaleString('tr-TR')} km
+                  </dd>
+                </div>
+                
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Garanti Durumu:</dt>
+                  <dd className="text-sm text-gray-900">
+                    {selectedEntry.hasWarranty !== null && selectedEntry.hasWarranty !== undefined 
+                      ? (selectedEntry.hasWarranty ? 'Garantili' : 'Garanti Yok') 
+                      : '-'
+                    }
+                  </dd>
+                </div>
+                
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Servis Notu:</dt>
+                  <dd className="text-sm text-gray-900 p-3 bg-gray-50 rounded-md min-h-[80px] max-h-[200px] overflow-y-auto">
+                    {selectedEntry.serviceNote || 'Servis notu bulunmamaktadır.'}
+                  </dd>
+                </div>
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
+              <button
+                onClick={() => setSelectedEntry(null)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 transition duration-150"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pagination */}
       <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">

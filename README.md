@@ -10,34 +10,107 @@
 - **Swagger UI:** http://localhost:5221
 - **PostgreSQL:** localhost:5432
 
+## Veri Sayısı
+- **30 Adet araç bilgisi sistemde mevcut**
+
 ## 🚀 Docker ile Çalıştırma
 
-### Temel Komutlar
+### 🆙 Sistem Başlatma
 ```bash
-# Tüm sistemi ayağa kaldır
+# 1. Repository'yi klonlayın
+git clone https://github.com/ElifYagmurAlim/toyota-vehicle-service-tracker.git
+cd toyota-vehicle-service-tracker
+
+# 2. Tüm sistemi ayağa kaldır (ilk çalıştırmada build edilir)
 docker-compose up -d
 
-# Servisleri kontrol et  
+# 3. Container durumlarını kontrol et
 docker-compose ps
 
-# Logları görüntüle
+# 4. Sistem hazır! Browser'da http://localhost:3000 adresine gidin
+```
+
+### 📊 Sistem Yönetimi
+```bash
+# Logları görüntüle (tüm servisler)
 docker-compose logs
 
-# Sistemi durdur
+# Belirli servis loglarını görüntüle
+docker-compose logs toyota-api
+docker-compose logs toyota-web  
+docker-compose logs toyota-postgres
+
+# Gerçek zamanlı log takibi
+docker-compose logs -f
+
+# Container durumları ve kaynak kullanımı
+docker-compose ps
+docker stats
+```
+
+### 🔄 Güncellemeler ve Yeniden Build
+```bash
+# Sadece web frontend'ini yeniden build et
+docker-compose build web
+docker-compose up -d web
+
+# Sadece API'yi yeniden build et
+docker-compose build api
+docker-compose up -d api
+
+# Tüm servisleri yeniden build et
+docker-compose build
+docker-compose up -d
+```
+
+### ⚠️ Sorun Giderme
+```bash
+# Container'ları yeniden başlat
+docker-compose restart
+
+# Belirli container'ı yeniden başlat
+docker-compose restart toyota-api
+
+# Container içine bağlan (debug için)
+docker exec -it toyota-postgres psql -U postgres -d VehicleServiceTrackerDb
+docker exec -it toyota-api bash
+docker exec -it toyota-web sh
+```
+
+### 🛑 Sistemi Durdurma ve Temizlik
+```bash
+# Sistemi durdur (container'lar durur, veriler korunur)
 docker-compose down
 
-# Sistemi durdur ve verileri temizle
+# Sistemi durdur ve tüm verileri sil
 docker-compose down -v
+
+# Sistemi durdur, volume'ları ve image'ları da sil
+docker-compose down -v --rmi all
+
+# Kullanılmayan Docker kaynaklarını temizle
+docker system prune -a
+
+# Sadece PostgreSQL verilerini sıfırla
+docker-compose down
+docker volume rm vehicleservicetracker_postgres_data
+docker-compose up -d
 ```
 
-### Environment Ayarları
+### 🔧 Environment Ayarları
 ```yaml
-# Development (Swagger aktif)
+# Development (Swagger aktif, detaylı loglar)
 ASPNETCORE_ENVIRONMENT=Development
 
-# Production (Swagger kapalı) 
+# Production (Swagger kapalı, optimize loglar) 
 ASPNETCORE_ENVIRONMENT=Production
 ```
+
+### 📡 Port Yapılandırması
+- **Frontend (React):** http://localhost:3000
+- **API (.NET):** http://localhost:5221
+- **Database (PostgreSQL):** localhost:5432
+- **Swagger UI:** http://localhost:5221 (Development modunda)
 
 ## 🛠️ Teknoloji Yığını
 
@@ -60,8 +133,17 @@ ASPNETCORE_ENVIRONMENT=Production
 
 ### DevOps
 - **Containerization:** Docker & Docker Compose
-- **Database Container:** PostgreSQL 16-alpine
+- **Database Container:** PostgreSQL 16 (UTF-8 locale support)
 - **Web Server:** Nginx (for React app)
+- **Auto Seed Data:** PostgreSQL init scripts
+- **Multi-stage Builds:** Optimized container images
+
+### 🆕 Son Güncellemeler
+- ✅ **Türkçe Karakter Desteği:** PostgreSQL UTF-8 encoding düzeltmeleri
+- ✅ **30 Adet Seed Data:** Gerçekçi Toyota araç servisi verileri
+- ✅ **Servis Detay Modal:** Interactive servis notu görüntüleme
+- ✅ **Docker Optimizasyon:** Health checks ve otomatik seed loading
+- ✅ **GitHub Integration:** Tam proje deployment
 
 ## 📋 Toyota Türkiye – Case Raporu
 
@@ -104,6 +186,18 @@ Kullanıcı sisteme giriş yapar, dashboard sayfasına yönlendirilir. Servis Gi
 - 🔢 Toplam kayıt sayısı gösterimi
 - ⬅️➡️ Önceki/Sonraki sayfa navigasyonu
 - 📍 Sayfa bilgisi
+- ✨ **YENİ:** Servis detay görüntüleme modal penceresi
+
+#### 🆕 Servis Detay Görüntüleme
+Kullanıcı servis kayıtları tablosunda her satırın sonundaki **"Detay"** butonuna tıklayarak servis notunu ve diğer detayları modal pencerede görüntüleyebilir.
+
+**Modal Özellikleri:**
+- 🔍 **Servis Detay Butonu:** Her tablo satırında Toyota kırmızısı renkli "Detay" butonu
+- 📝 **Servis Notu Görüntüleme:** Tam servis notunu scrollable alan içinde gösterme
+- 📊 **Detaylı Bilgiler:** Servis tarihi, şehir, kilometre, garanti durumu
+- ❌ **Kolay Kapatma:** Modal dışına tıklama veya "Kapat" butonu ile kapatma
+- 📱 **Responsive:** Mobil uyumlu tasarım
+- 🎨 **Toyota Corporate Colors:** Kırmızı renk teması
 
 ### 🏗️ İşlevsel Olmayan Gereksinimler
 
